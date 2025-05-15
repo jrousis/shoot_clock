@@ -639,12 +639,20 @@ void handleIRCommand(uint32_t command) {
 		{
             myLED.print(Display_buf, INVERT_DISPLAY);
 			Display_on = true;
+#if SEND_TO_SLAVE
+            memcpy(packet_to_slave.time, Display_buf, DISPLAY_DIGITS);
+            result = esp_now_send(broadcastAddress1, (uint8_t*)&packet_to_slave, sizeof(packet_to_slave));
+#endif // SEND_TO_SLAVE            
 		}
 		else
 		{
             // show spaces on the display
             chrono.stop();
             myLED.print("  ", INVERT_DISPLAY);
+#if SEND_TO_SLAVE
+            memcpy(packet_to_slave.time, "  ", DISPLAY_DIGITS);
+            result = esp_now_send(broadcastAddress1, (uint8_t*)&packet_to_slave, sizeof(packet_to_slave));
+#endif // SEND_TO_SLAVE            
 			Display_on = false;
 		}
 		Serial.println("IR: POWER");
